@@ -2,8 +2,10 @@ import os
 import hmac
 import hashlib
 import json
+import logging
 from datetime import datetime
 from typing import Dict, Any
+from dotenv import load_dotenv
 
 from telegram import Update, WebAppInfo, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -15,10 +17,23 @@ from telegram.ext import (
     filters
 )
 
+# Load environment variables
+load_dotenv()
+
+# Configure logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
+
 # Configuration
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://your-webapp-url.com")
-BOT_SECRET = os.getenv("BOT_SECRET", "your-secret-key")  # For validating WebApp data
+WEBAPP_URL = os.getenv("WEBAPP_URL", "http://localhost:5173")
+BOT_SECRET = os.getenv("BOT_SECRET")
+
+if not TELEGRAM_BOT_TOKEN:
+    raise ValueError("TELEGRAM_BOT_TOKEN not found in environment variables")
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send welcome message with Mini App button when the command /start is issued."""
@@ -134,10 +149,23 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     )
     await update.message.reply_text(help_text)
 
+async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle errors in the bot."""
+    logger.error("Exception while handling an update:", exc_info=context.error)
+    if update and update.effective_message:
+        await update.effective_message.reply_text(
+            "Sorry, something went wrong. Please try again later."
+        )
+
 def main() -> None:
     """Start the bot."""
+    logger.info("Starting Sacred Wallpaper Bot...")
+    
     # Create the Application
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
+    
+    # Register error handler
+    application.add_error_handler(error_handler)
 
     # Add command handlers
     application.add_handler(CommandHandler("start", start_command))
@@ -149,7 +177,8 @@ def main() -> None:
     application.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
 
     # Start the Bot
-    application.run_polling()
+    logger.info("Bot is ready to handle updates!")
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == '__main__':
     main()
