@@ -43,10 +43,7 @@ const Generator = () => {
 
     setIsGenerating(true);
     try {
-      // Calculate current biorhythm
-      const biorhythm = await api.calculateBiorhythm(birthData);
-
-      // Generate wallpaper with biorhythm data
+      // Generate wallpaper with birth data
       const data = await api.generateWallpaper({
         birth_date: birthData.date,
         focus_mode: settings.focusMode,

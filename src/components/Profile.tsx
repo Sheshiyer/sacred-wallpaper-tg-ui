@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { SubscriptionStatus, TelegramUser, BirthDataSchema, UserState } from '../types';
+import { SubscriptionStatus, TelegramUser, BirthDataSchema } from '../types';
 import BirthDataForm from './BirthDataForm';
 import { api } from '../services/api';
 import { telegramService } from '../services/telegram';
@@ -7,7 +7,6 @@ import { telegramService } from '../services/telegram';
 const Profile = () => {
   const [user, setUser] = useState<TelegramUser | null>(null);
   const [birthData, setBirthData] = useState<BirthDataSchema | null>(null);
-  const [userState, setUserState] = useState<UserState | null>(null);
   const [subscription, setSubscription] = useState<SubscriptionStatus>({
     type: 'free'
   });
@@ -40,23 +39,9 @@ const Profile = () => {
 
     // Load stored birth data and calculations
     const storedBirthData = localStorage.getItem('birthData');
-    const storedBiorhythm = localStorage.getItem('biorhythm');
-    const storedDasha = localStorage.getItem('dasha');
-
     if (storedBirthData) {
       const birthData = JSON.parse(storedBirthData);
       setBirthData(birthData);
-
-      // If we have birth data but missing calculations, recalculate them
-      if (!storedBiorhythm || !storedDasha) {
-        handleBirthDataSubmit(birthData).catch(console.error);
-      } else {
-        setUserState({
-          current_biorhythm: JSON.parse(storedBiorhythm),
-          current_dasha: JSON.parse(storedDasha),
-          last_updated: new Date().toISOString()
-        });
-      }
     }
   }, []);
 
@@ -100,11 +85,6 @@ const Profile = () => {
       localStorage.setItem('dasha', JSON.stringify(dashaData));
 
       setBirthData(data);
-      setUserState({
-        current_biorhythm: biorhythmData,
-        current_dasha: dashaData,
-        last_updated: new Date().toISOString()
-      });
       setShowBirthDataForm(false);
     } catch (error) {
       console.error('Failed to save birth data:', error);
