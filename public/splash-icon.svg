@@ -1,0 +1,62 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Sacred geometry background -->
+  <path d="
+    M256 56
+    L456 256
+    L256 456
+    L56 256
+    Z
+    M256 106
+    L406 256
+    L256 406
+    L106 256
+    Z
+    M256 156
+    L356 256
+    L256 356
+    L156 256
+    Z
+    M241 241
+    L271 241
+    L271 271
+    L241 271
+    Z
+  " fill="url(#gradient)" opacity="0.9">
+    <animate 
+      attributeName="opacity"
+      values="0.7;0.9;0.7"
+      dur="2s"
+      repeatCount="indefinite"
+    />
+  </path>
+
+  <!-- Wallpaper icon -->
+  <path d="
+    M206 156
+    A50 50 0 0 1 306 156
+    A50 50 0 0 1 306 256
+    A50 50 0 0 1 206 256
+    A50 50 0 0 1 206 156
+    M231 181
+    A25 25 0 0 1 281 181
+    A25 25 0 0 1 281 231
+    A25 25 0 0 1 231 231
+    A25 25 0 0 1 231 181
+  " fill="white">
+    <animate
+      attributeName="transform"
+      type="rotate"
+      from="0 256 256"
+      to="360 256 256"
+      dur="10s"
+      repeatCount="indefinite"
+    />
+  </path>
+</svg>
